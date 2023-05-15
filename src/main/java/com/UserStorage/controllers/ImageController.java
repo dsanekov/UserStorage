@@ -11,6 +11,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
@@ -29,6 +30,7 @@ public class ImageController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get image by id")
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getImageById(@PathVariable("id") int id) {
         Image image = imagesRepository.findById(id).orElse(null);
         if(image == null){

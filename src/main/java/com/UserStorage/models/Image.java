@@ -27,7 +27,7 @@ public class Image {
     @OneToOne(mappedBy = "image")
     private User user;
 
-    @Lob
+    //@Lob
     private byte [] bytes;
 
     public Image(){}

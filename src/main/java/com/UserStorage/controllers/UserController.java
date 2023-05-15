@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +32,7 @@ public class UserController {
     }
     @PostMapping("/create")
     @Operation(summary = "Create new user")
+    @Transactional
     public ResponseEntity<Object> createNewUser(@RequestParam(name = "surname") String surname,
                                                       @RequestParam(name = "name") String name,
                                                       @RequestParam(name = "middleName") String middleName,
@@ -56,11 +58,13 @@ public class UserController {
     }
     @GetMapping("/{id}")
     @Operation(summary = "Get user by id")
+    @Transactional(readOnly = true)
     public ResponseEntity<Object> getUserById(@PathVariable("id") int id) {
         User user = usersRepository.findById(id).orElse(null);
         if(user == null){
             return new ResponseEntity<>("Not found", HttpStatus.NOT_FOUND);
         }
+        //TODO вернуть фотку нельзя сделай надо ДТО шку
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 }

@@ -19,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api1")
@@ -77,7 +79,7 @@ public class UserController {
     }
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete user by id")
-    public ResponseEntity<Object> delete(@PathVariable("id") int id) {
+    public ResponseEntity<Object> deleteUserById(@PathVariable("id") int id) {
         User user = usersRepository.findById(id).orElse(null);
         if(user != null){
             usersRepository.delete(user);
@@ -121,6 +123,19 @@ public class UserController {
         UserDTO userDTO = convertToUserDTO(user);
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
+
+    @GetMapping()
+    @Operation(summary = "Get all users")
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> getAllUsers(){
+        List<User> users = usersRepository.findAll();
+        List<UserDTO> userDTOS = new ArrayList<>();
+        for (User user : users){
+            userDTOS.add(convertToUserDTO(user));
+        }
+        return new ResponseEntity<>(userDTOS, HttpStatus.OK);
+    }
+
 
     private UserDTO convertToUserDTO(User user){
         ModelMapper modelMapper = new ModelMapper();

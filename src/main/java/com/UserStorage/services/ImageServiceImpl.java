@@ -27,6 +27,22 @@ public class ImageServiceImpl implements ImageService{
         }
         return null;
     }
+
+    @Override
+    public Image editImage(int id, MultipartFile file) throws IOException {
+        Image image = imagesRepository.findById(id).orElse(null);
+        if(file.getSize() != 0 && image != null){
+            image.setName(file.getName());
+            image.setSize(file.getSize());
+            image.setContentType(file.getContentType());
+            image.setOriginalFileName(file.getOriginalFilename());
+            image.setBytes(file.getBytes());
+            imagesRepository.save(image);
+            log.info("Edit image with id " + id);
+        }
+        return image;
+    }
+
     private Image toImageEntity(MultipartFile file) throws IOException {
         Image newImage = new Image();
         newImage.setName(file.getName());

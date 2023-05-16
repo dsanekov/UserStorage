@@ -26,43 +26,22 @@ import java.io.IOException;
 @Slf4j
 public class ImageController {
     private final ImageService imageService;
-    private final ImagesRepository imagesRepository;
     @Autowired
-    public ImageController(ImageService imageService, ImagesRepository imagesRepository) {
+    public ImageController(ImageService imageService) {
         this.imageService = imageService;
-        this.imagesRepository = imagesRepository;
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get image by id")
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getImageById(@PathVariable("id") int id) {
-        Image image = imagesRepository.findById(id).orElse(null);
-        if(image == null){
-            return new ResponseEntity<>("Not found", HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.ok()
-                .header("fileName",image.getOriginalFileName())
-                .contentType(MediaType.valueOf(image.getContentType()))
-                .contentLength(image.getSize())
-                .body(new InputStreamResource(new ByteArrayInputStream(image.getBytes())));
+    public ResponseEntity<Object> getImageById(@PathVariable("id") int id) {
+        return imageService.getImageById(id);
     }
 
     @PatchMapping("/{id}/edit")
     @Operation(summary = "Replace image by id")
     public ResponseEntity<Object> editImageById(@PathVariable("id") int id,
                                                 @RequestParam("file") MultipartFile file) throws IOException {
-
-        Image image = imageService.editImage(id,file);
-        if(image == null){
-            log.info("Image with id - " + id + " is not found!");
-            return new ResponseEntity<>("Image with id - " + id + " is not found!", HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.ok()
-                .header("fileName",image.getOriginalFileName())
-                .contentType(MediaType.valueOf(image.getContentType()))
-                .contentLength(image.getSize())
-                .body(new InputStreamResource(new ByteArrayInputStream(image.getBytes())));
+        return imageService.editImage(id,file);
     }
-
 }

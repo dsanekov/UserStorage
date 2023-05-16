@@ -27,14 +27,10 @@ import java.util.List;
 @Tag(name = "User", description = "Methods for users")
 @Slf4j
 public class UserController {
-    private final UsersRepository usersRepository;
     private final UsersService usersService;
-    private final ImageService imageService;
     @Autowired
-    public UserController(UsersRepository usersRepository, UsersService usersService, ImageService imageService) {
-        this.usersRepository = usersRepository;
+    public UserController(UsersService usersService) {
         this.usersService = usersService;
-        this.imageService = imageService;
     }
     @PostMapping("/create")
     @Operation(summary = "Create new user")
@@ -47,47 +43,18 @@ public class UserController {
                                                       @RequestParam(name = "phone") String phone,
                                                       @RequestParam("file") MultipartFile file
                                                       ) throws IOException {
-        Image newImage = imageService.saveImage(file);
-        if(newImage == null){
-            log.info("Image size = 0");
-            return new ResponseEntity<>("Image size = 0",HttpStatus.BAD_REQUEST);
-        }
-        User user = new User();
-        user.setSurname(surname);
-        user.setName(name);
-        user.setMiddleName(middleName);
-        user.setDateOfBirth(dateOfBirth);
-        user.setEmail(email);
-        user.setPhone(phone);
-        user.setImage(newImage);
-        usersRepository.save(user);
-        log.info("User was created with id " + user.getId());
-        return new ResponseEntity<>(user.getId(), HttpStatus.OK);
+        return usersService.createNewUser(surname,name,middleName,dateOfBirth,email,phone,file);
     }
     @GetMapping("/{id}")
     @Operation(summary = "Get user by id")
     @Transactional(readOnly = true)
-    public ResponseEntity<Object> getUserById(@PathVariable("id") int id) {
-        User user = usersRepository.findById(id).orElse(null);
-        if(user == null){
-            log.info("User not found");
-            return new ResponseEntity<>("Not found", HttpStatus.NOT_FOUND);
-        }
-        log.info("Getting userDTO");
-        UserDTO userDTO = convertToUserDTO(user);
-        return new ResponseEntity<>(userDTO,HttpStatus.OK);
+    public ResponseEntity<Object> getUserDTOById(@PathVariable("id") int id) {
+        return usersService.getUserDTOById(id);
     }
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete user by id")
     public ResponseEntity<Object> deleteUserById(@PathVariable("id") int id) {
-        User user = usersRepository.findById(id).orElse(null);
-        if(user != null){
-            usersRepository.delete(user);
-            log.info("User with id - " + id + " has been deleted!");
-            return new ResponseEntity<>("User with id - " + id + " has been deleted!", HttpStatus.OK);
-        }
-        log.info("User with id - " + id + " is not found!");
-        return new ResponseEntity<>("User with id - " + id + " is not found!", HttpStatus.NOT_FOUND);
+        return usersService.deleteUserById(id);
     }
 
     @PatchMapping("/{id}/edit/contactInfo")
@@ -95,15 +62,7 @@ public class UserController {
     public ResponseEntity<Object> editContactInfoById(@PathVariable("id") int id,
                                                       @RequestParam(name = "email") String email,
                                                       @RequestParam(name = "phone") String phone) {
-
-        User user = usersService.edit(id,email,phone);
-        if(user == null){
-            log.info("User not found");
-            return new ResponseEntity<>("Not found", HttpStatus.NOT_FOUND);
-        }
-        log.info("User's contact info with id - " + id + " has been edited");
-        UserDTO userDTO = convertToUserDTO(user);
-        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+        return usersService.editContactInfoById(id,email,phone);
     }
 
     @PatchMapping("/{id}/edit/detailedInfo")
@@ -113,32 +72,13 @@ public class UserController {
                                                        @RequestParam(name = "name") String name,
                                                        @RequestParam(name = "middleName") String middleName,
                                                        @RequestParam(name = "dateOfBirth") LocalDate dateOfBirth) {
-
-        User user = usersService.edit(id,surname,name, middleName, dateOfBirth);
-        if(user == null){
-            log.info("User not found");
-            return new ResponseEntity<>("Not found", HttpStatus.NOT_FOUND);
-        }
-        log.info("User's detailed info with id - " + id + " has been edited");
-        UserDTO userDTO = convertToUserDTO(user);
-        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+        return usersService.editDetailedInfoById(id,surname,name,middleName,dateOfBirth);
     }
 
     @GetMapping()
     @Operation(summary = "Get all users")
     @Transactional(readOnly = true)
     public ResponseEntity<Object> getAllUsers(){
-        List<User> users = usersRepository.findAll();
-        List<UserDTO> userDTOS = new ArrayList<>();
-        for (User user : users){
-            userDTOS.add(convertToUserDTO(user));
-        }
-        return new ResponseEntity<>(userDTOS, HttpStatus.OK);
-    }
-
-
-    private UserDTO convertToUserDTO(User user){
-        ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(user,UserDTO.class);
+        return usersService.getAllUsers();
     }
 }

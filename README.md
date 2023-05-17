@@ -1,6 +1,13 @@
 # UserStorage
 
-This is a CRUD REST-API project, which allows you to work with users. 
+This is a CRUD REST-API project, which allows you to work with users. You can create user with:
+1) Surname,
+2) Name,
+3) Middle name, 
+4) Date of birth, 
+5) Email, 
+6) Phone number, 
+7) Image. 
 
 ## Technology stack
 

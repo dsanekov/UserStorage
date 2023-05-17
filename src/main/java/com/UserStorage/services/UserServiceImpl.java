@@ -3,7 +3,6 @@ package com.UserStorage.services;
 import com.UserStorage.dto.UserDTO;
 import com.UserStorage.models.Image;
 import com.UserStorage.models.User;
-import com.UserStorage.repositories.ImagesRepository;
 import com.UserStorage.repositories.UsersRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -22,12 +21,10 @@ import java.util.List;
 @Slf4j
 public class UserServiceImpl implements UsersService{
     private final UsersRepository usersRepository;
-    private final ImagesRepository imagesRepository;
     private final ImageService imageService;
     @Autowired
-    public UserServiceImpl(UsersRepository usersRepository, ImagesRepository imagesRepository, ImageService imageService) {
+    public UserServiceImpl(UsersRepository usersRepository, ImageService imageService) {
         this.usersRepository = usersRepository;
-        this.imagesRepository = imagesRepository;
         this.imageService = imageService;
     }
 

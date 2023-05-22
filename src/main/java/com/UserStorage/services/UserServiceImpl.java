@@ -1,5 +1,6 @@
 package com.UserStorage.services;
 
+import com.UserStorage.dto.ImageDTO;
 import com.UserStorage.dto.UserDTO;
 import com.UserStorage.models.Image;
 import com.UserStorage.models.User;
@@ -132,7 +133,8 @@ public class UserServiceImpl implements UsersService{
 
     @Override
     public ResponseEntity<Object> createNewUser(String surname, String name, String middleName, LocalDate dateOfBirth, String email, String phone, MultipartFile file) throws IOException {
-        Image newImage = imageService.saveImage(file);
+        ImageDTO newImageDTO = imageService.saveImage(file);
+        Image newImage = imageService.getImageEntityById(newImageDTO.getId());
         if(newImage == null){
             log.info("Image size = 0");
             return new ResponseEntity<>("Image size = 0", HttpStatus.BAD_REQUEST);

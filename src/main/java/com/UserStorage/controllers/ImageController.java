@@ -44,4 +44,10 @@ public class ImageController {
                                                 @RequestParam("file") MultipartFile file) throws IOException {
         return imageService.editImage(id,file);
     }
+    @GetMapping("/get-by-user-id/{id}")
+    @Operation(summary = "Get image by user id")
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> getImageByUserId(@PathVariable("id") int userId){
+        return imageService.getImageByUserId(userId);
+    }
 }

@@ -1,8 +1,12 @@
 package com.UserStorage.services;
 
+import com.UserStorage.dto.ImageDTO;
+import com.UserStorage.dto.UserDTO;
 import com.UserStorage.models.Image;
+import com.UserStorage.models.User;
 import com.UserStorage.repositories.ImagesRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
@@ -23,12 +27,12 @@ public class ImageServiceImpl implements ImageService{
     }
 
     @Override
-    public Image saveImage(MultipartFile file) throws IOException {
+    public ImageDTO saveImage(MultipartFile file) throws IOException {
         if (file.getSize() != 0) {
             Image image = toImageEntity(file);
             imagesRepository.save(image);
             log.info("Save new image " + file.getOriginalFilename());
-            return image;
+            return convertToImageDTO(image);
         }
         return null;
     }
@@ -62,11 +66,26 @@ public class ImageServiceImpl implements ImageService{
         if(image == null){
             return new ResponseEntity<>("Not found", HttpStatus.NOT_FOUND);
         }
+        ImageDTO imageDTO = convertToImageDTO(image);
         return ResponseEntity.ok()
-                .header("fileName",image.getOriginalFileName())
-                .contentType(MediaType.valueOf(image.getContentType()))
-                .contentLength(image.getSize())
-                .body(new InputStreamResource(new ByteArrayInputStream(image.getBytes())));
+                .header("fileName",imageDTO.getOriginalFileName())
+                .contentType(MediaType.valueOf(imageDTO.getContentType()))
+                .contentLength(imageDTO.getSize())
+                .body(new InputStreamResource(new ByteArrayInputStream(imageDTO.getBytes())));
+    }
+
+    @Override
+    public ResponseEntity<Object> getImageByUserId(int userId) {
+        Image image = imagesRepository.findImageByUserId(userId);
+        if(image == null){
+            return new ResponseEntity<>("Not found", HttpStatus.NOT_FOUND);
+        }
+        ImageDTO imageDTO = convertToImageDTO(image);
+        return ResponseEntity.ok()
+                .header("fileName",imageDTO.getOriginalFileName())
+                .contentType(MediaType.valueOf(imageDTO.getContentType()))
+                .contentLength(imageDTO.getSize())
+                .body(new InputStreamResource(new ByteArrayInputStream(imageDTO.getBytes())));
     }
 
     private Image toImageEntity(MultipartFile file) throws IOException {
@@ -77,5 +96,13 @@ public class ImageServiceImpl implements ImageService{
         newImage.setOriginalFileName(file.getOriginalFilename());
         newImage.setBytes(file.getBytes());
         return newImage;
+    }
+    @Override
+    public Image getImageEntityById(int id) {
+        return imagesRepository.findById(id).orElse(null);
+    }
+    private ImageDTO convertToImageDTO(Image image){
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(image,ImageDTO.class);
     }
 }

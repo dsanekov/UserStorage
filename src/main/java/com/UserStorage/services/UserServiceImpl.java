@@ -4,7 +4,7 @@ import com.UserStorage.dto.ImageDTO;
 import com.UserStorage.dto.UserDTO;
 import com.UserStorage.models.Image;
 import com.UserStorage.models.User;
-import com.UserStorage.repositories.UsersRepository;
+import com.UserStorage.config.UsersRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

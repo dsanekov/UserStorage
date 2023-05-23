@@ -1,17 +1,10 @@
 package com.UserStorage.controllers;
 
-import com.UserStorage.dto.UserDTO;
-import com.UserStorage.models.Image;
-import com.UserStorage.models.User;
-import com.UserStorage.repositories.UsersRepository;
-import com.UserStorage.services.ImageService;
 import com.UserStorage.services.UsersService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api1")

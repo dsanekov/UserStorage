@@ -1,4 +1,4 @@
-package com.UserStorage.repositories;
+package com.UserStorage.config;
 
 import com.UserStorage.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;

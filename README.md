@@ -13,12 +13,17 @@ This is a CRUD REST-API project, which allows you to work with users. You can cr
 
 - Java Core,
 - Spring Boot,
+- Spring Security,
 - Spring Data,
 - Hibernate,
 - PostgreSQL,
 - Swagger.
 
 ## Web
+
+First you need to go to the registration endpoint. Then pass authorization on the authorization endpoint. After authorization, you will receive a token in response. Use this token to access other endpoints.
+-/api3/auth/register
+-/api3/auth/authenticate
 
 You can see the endpoints on the swager page.
 - /swagger-ui/index.html
